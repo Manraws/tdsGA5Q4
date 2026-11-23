@@ -61,4 +61,14 @@ if __name__ == "__main__":
     test_health()
     test_isolated_fixture_cleanup()
     test_block_harmful_request()
-    print("All local tests passed.")
+    # Test POST /
+    res_root = client.post("/", json={
+        "profile": PROFILE, "batchId": "b-root", "policy": {}, "cases": []
+    })
+    assert res_root.status_code == 200
+    # Test POST /evaluate
+    res_eval = client.post("/evaluate", json={
+        "profile": PROFILE, "batchId": "b-eval", "policy": {}, "cases": []
+    })
+    assert res_eval.status_code == 200
+    print("All local tests passed including alternate routes.")

@@ -5,6 +5,7 @@ import re
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 PROFILE = "agent-harness-2026-09"
@@ -15,6 +16,14 @@ app = FastAPI(
     title="Harness Safety Classifier",
     version="1.0.0",
     description="Deterministic implementation of the agent-harness-2026-09 policy."
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # These patterns identify prohibited purposes, not merely words appearing in quoted text.
@@ -371,6 +380,8 @@ async def health():
     return {"status": "ok"}
 
 @app.post("/classify")
+@app.post("/evaluate")
+@app.post("/")
 async def classify(request: Request):
     raw = await request.body()
     if len(raw) > MAX_BODY_BYTES:
